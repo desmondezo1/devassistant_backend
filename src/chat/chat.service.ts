@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Configuration, OpenAIApi } from 'openai';
 import { CreateChatDto } from './dto/create-chat.dto';
 
 @Injectable()
 export class ChatService {
+  constructor(private configService: ConfigService) {}
   async create(createChatDto: CreateChatDto) {
     const { query } = createChatDto;
 
+    const ApiKey = this.configService.get('OPENAI_APIKEY');
+
     console.log('request started ...');
     const configuration = new Configuration({
-      apiKey: process.env.OPENAI_APIKEY,
+      apiKey: ApiKey,
     });
     const openai = new OpenAIApi(configuration);
     const completion = await openai.createChatCompletion({
